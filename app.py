@@ -8,6 +8,7 @@ from flask import Flask, render_template, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 from heygen_client import get_streaming_token
+from liveavatar_client import list_public_avatars
 
 
 load_dotenv()
@@ -44,6 +45,11 @@ def index():
 
 @app.route("/api/heygen-token", methods=["GET"])
 def heygen_token():
+    """
+    Endpoint antiguo de HeyGen Streaming.
+    Puede devolver endpoint_sunset porque HeyGen migró a LiveAvatar.
+    Lo dejamos temporalmente para comparar errores.
+    """
     try:
         token = get_streaming_token()
         return jsonify({"token": token})
@@ -51,6 +57,23 @@ def heygen_token():
         print("HEYGEN TOKEN ERROR:", e)
         return jsonify({
             "error": "No se pudo obtener token de HeyGen",
+            "details": str(e)
+        }), 500
+
+
+@app.route("/api/liveavatar/avatars", methods=["GET"])
+def liveavatar_avatars():
+    """
+    Test mínimo para comprobar que Render puede conectar con LiveAvatar
+    y que LIVEAVATAR_API_KEY funciona.
+    """
+    try:
+        data = list_public_avatars()
+        return jsonify(data)
+    except Exception as e:
+        print("LIVEAVATAR AVATARS ERROR:", e)
+        return jsonify({
+            "error": "No se pudo obtener la lista de avatares de LiveAvatar",
             "details": str(e)
         }), 500
 
