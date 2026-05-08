@@ -97,8 +97,7 @@ def create_session_token_full_mode():
         },
         "voice": {
             "voice_id": get_liveavatar_voice_id()
-        },
-        "is_sandbox": True
+        }
     }
 
     response = requests.post(
