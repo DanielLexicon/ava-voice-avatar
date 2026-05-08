@@ -245,6 +245,60 @@
     .ava-avatar.speaking .mouth {
         animation: talk 0.18s infinite alternate;
     }
+.liveavatar-panel {
+    margin-bottom: 28px;
+    padding: 20px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.liveavatar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.liveavatar-header h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+}
+
+.liveavatar-header p {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.liveavatar-video-box {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at center, rgba(56, 189, 248, 0.20), transparent 50%),
+        rgba(15, 23, 42, 0.80);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.liveavatar-video-box span {
+    color: rgba(219, 234, 254, 0.75);
+    font-size: 15px;
+}
+
+#liveAvatarVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 
     .hero-copy h2 {
         margin: 0 0 10px;
@@ -573,6 +627,16 @@
             max-height: 300px;
         }
     }
+    .liveavatar-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+}
+
+.liveavatar-header button {
+    width: 100%;
+}
+
 </style>
 </head>
 
@@ -595,38 +659,58 @@
             </div>
         </div>
 
-        <div class="hero">
-            <div class="avatar-wrap">
-                <div id="avatar" class="ava-avatar">
-                    <div class="ava-glow"></div>
+        <div class="liveavatar-panel">
+    <div class="liveavatar-header">
+        <div>
+            <h2>LiveAvatar Test</h2>
+            <p>Prueba experimental con avatar real de HeyGen LiveAvatar.</p>
+        </div>
 
-                    <div class="ava-head">
-                        <div class="ava-hair"></div>
+        <button id="startLiveAvatarBtn" class="primary-btn">🎥 Iniciar LiveAvatar</button>
+    </div>
 
-                        <div class="ava-face">
-                            <div class="ava-eyes">
-                                <span></span>
-                                <span></span>
-                            </div>
+    <div id="liveAvatarVideoBox" class="liveavatar-video-box">
+        <span id="liveAvatarPlaceholder">El avatar real aparecerá aquí.</span>
+        <video id="liveAvatarVideo" autoplay playsinline style="display:none;"></video>
+    </div>
 
-                            <div class="ava-nose"></div>
-                            <div class="mouth"></div>
-                        </div>
+    <div id="liveAvatarStatus" class="footer-note">
+        LiveAvatar todavía no iniciado.
+    </div>
+</div>
+
+<div class="hero">
+    <div class="avatar-wrap">
+        <div id="avatar" class="ava-avatar">
+            <div class="ava-glow"></div>
+
+            <div class="ava-head">
+                <div class="ava-hair"></div>
+
+                <div class="ava-face">
+                    <div class="ava-eyes">
+                        <span></span>
+                        <span></span>
                     </div>
 
-                    <div class="ava-neck"></div>
-                    <div class="ava-shoulders"></div>
+                    <div class="ava-nose"></div>
+                    <div class="mouth"></div>
                 </div>
             </div>
 
-            <div class="hero-copy">
-                <h2 id="heroTitle">Habla con Ava</h2>
-                <p id="heroInstructions">
-                    Presiona <strong>Hablar</strong> o escribe tu pregunta.
-                    Ava escucha, procesa tu consulta y responde con texto y audio.
-                </p>
-            </div>
+            <div class="ava-neck"></div>
+            <div class="ava-shoulders"></div>
         </div>
+    </div>
+
+    <div class="hero-copy">
+        <h2 id="heroTitle">Habla con Ava</h2>
+        <p id="heroInstructions">
+            Presiona <strong>Hablar</strong> o escribe tu pregunta.
+            Ava escucha, procesa tu consulta y responde con texto y audio.
+        </p>
+    </div>
+</div>
 
         <div class="language-row">
             <label id="languageLabel" for="languageSelect">Idioma:</label>
