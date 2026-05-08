@@ -15,22 +15,12 @@ load_dotenv()
 app = Flask(__name__)
 
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "").strip()
+ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "").strip()
 
 
-if not OPENAI_API_KEY:
-    raise ValueError("Falta OPENAI_API_KEY en el archivo .env")
-
-if not ELEVENLABS_API_KEY:
-    raise ValueError("Falta ELEVENLABS_API_KEY en el archivo .env")
-
-if not ELEVENLABS_VOICE_ID:
-    raise ValueError("Falta ELEVENLABS_VOICE_ID en el archivo .env")
-
-
-client = OpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 
 SYSTEM_PROMPT = """
@@ -92,6 +82,9 @@ def chat():
 
 
 def generate_openai_response(user_message, history):
+    if not client:
+        raise Exception("OPENAI_API_KEY no está disponible en el servidor")
+
     messages = [
         {
             "role": "system",
@@ -125,6 +118,12 @@ def generate_openai_response(user_message, history):
 
 
 def generate_elevenlabs_audio(text):
+    if not ELEVENLABS_API_KEY:
+        raise Exception("ELEVENLABS_API_KEY no está disponible en el servidor")
+
+    if not ELEVENLABS_VOICE_ID:
+        raise Exception("ELEVENLABS_VOICE_ID no está disponible en el servidor")
+
     audio_folder = os.path.join(app.root_path, "static", "audio")
     os.makedirs(audio_folder, exist_ok=True)
 
