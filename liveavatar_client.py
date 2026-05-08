@@ -8,7 +8,7 @@ load_dotenv()
 BASE_URL = "https://api.liveavatar.com/v1"
 
 
-def clean_api_key(value):
+def clean_value(value):
     if not value:
         return ""
 
@@ -21,8 +21,7 @@ def clean_api_key(value):
 
 
 def get_liveavatar_api_key():
-    raw_key = os.getenv("LIVEAVATAR_API_KEY", "")
-    api_key = clean_api_key(raw_key)
+    api_key = clean_value(os.getenv("LIVEAVATAR_API_KEY", ""))
 
     if not api_key:
         raise ValueError("Falta LIVEAVATAR_API_KEY en las variables de entorno")
@@ -30,11 +29,42 @@ def get_liveavatar_api_key():
     return api_key
 
 
+def get_liveavatar_avatar_id():
+    avatar_id = clean_value(os.getenv("LIVEAVATAR_AVATAR_ID", ""))
+
+    if not avatar_id:
+        raise ValueError("Falta LIVEAVATAR_AVATAR_ID en las variables de entorno")
+
+    return avatar_id
+
+
+def get_liveavatar_voice_id():
+    voice_id = clean_value(os.getenv("LIVEAVATAR_VOICE_ID", ""))
+
+    if not voice_id:
+        raise ValueError("Falta LIVEAVATAR_VOICE_ID en las variables de entorno")
+
+    return voice_id
+
+
 def get_headers():
     return {
         "X-API-KEY": get_liveavatar_api_key(),
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
     }
+
+
+def parse_response(response):
+    try:
+        data = response.json()
+    except Exception:
+        raise Exception(f"LiveAvatar devolvió una respuesta no JSON: {response.text}")
+
+    if 200 <= response.status_code < 300:
+        return data
+
+    raise Exception(f"LiveAvatar error {response.status_code}: {data}")
 
 
 def list_public_avatars():
@@ -46,12 +76,32 @@ def list_public_avatars():
         timeout=30
     )
 
-    try:
-        data = response.json()
-    except Exception:
-        raise Exception(f"LiveAvatar devolvió una respuesta no JSON: {response.text}")
+    return parse_response(response)
 
-    if response.status_code == 200:
-        return data
 
-    raise Exception(f"LiveAvatar error {response.status_code}: {data}")
+def create_session_token_full_mode():
+    """
+    Primer test para crear un session token de LiveAvatar en FULL mode.
+
+    FULL mode deja que LiveAvatar maneje el pipeline de avatar en tiempo real.
+    Si esto funciona, después conectamos el frontend/SDK.
+    """
+    url = f"{BASE_URL}/sessions/token"
+
+    payload = {
+        "mode": "FULL",
+        "avatar_id": get_liveavatar_avatar_id(),
+        "voice": {
+            "voice_id": get_liveavatar_voice_id()
+        },
+        "is_sandbox": True
+    }
+
+    response = requests.post(
+        url,
+        headers=get_headers(),
+        json=payload,
+        timeout=30
+    )
+
+    return parse_response(response)

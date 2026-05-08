@@ -8,7 +8,9 @@ from flask import Flask, render_template, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 from heygen_client import get_streaming_token
-from liveavatar_client import list_public_avatars
+
+from liveavatar_client import list_public_avatars, create_session_token_full_mode
+
 
 
 load_dotenv()
@@ -76,6 +78,21 @@ def liveavatar_avatars():
             "error": "No se pudo obtener la lista de avatares de LiveAvatar",
             "details": str(e)
         }), 500
+
+
+
+@app.route("/api/liveavatar/session-token", methods=["GET"])
+def liveavatar_session_token():
+    try:
+        data = create_session_token_full_mode()
+        return jsonify(data)
+    except Exception as e:
+        print("LIVEAVATAR SESSION TOKEN ERROR:", e)
+        return jsonify({
+            "error": "No se pudo crear session token de LiveAvatar",
+            "details": str(e)
+        }), 500
+
 
 
 @app.route("/api/chat", methods=["POST"])
