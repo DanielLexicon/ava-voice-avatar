@@ -55,7 +55,23 @@ async function startLiveAvatarTest() {
             voiceChat: false
         });
 
+        // Debug importante: dejamos la sesión accesible desde la consola
+        window.liveAvatarSession = liveAvatarSession;
+
+        console.log("LiveAvatar session instance:", liveAvatarSession);
+        console.log(
+            "LiveAvatar session prototype methods:",
+            Object.getOwnPropertyNames(Object.getPrototypeOf(liveAvatarSession))
+        );
+
+        console.log(
+            "LiveAvatar session own properties:",
+            Object.keys(liveAvatarSession)
+        );
+
         if (SessionEvent) {
+            console.log("LiveAvatar SessionEvent:", SessionEvent);
+
             liveAvatarSession.on(SessionEvent.SESSION_STATE_CHANGED, function (state) {
                 console.log("LiveAvatar state:", state);
                 liveAvatarStatus.textContent = "Estado LiveAvatar: " + state;
@@ -89,6 +105,13 @@ async function startLiveAvatarTest() {
         await liveAvatarSession.start();
 
         liveAvatarStatus.textContent = "LiveAvatar iniciado. Esperando video...";
+
+        // Debug después de iniciar
+        console.log("LiveAvatar session after start:", liveAvatarSession);
+        console.log(
+            "LiveAvatar methods after start:",
+            Object.getOwnPropertyNames(Object.getPrototypeOf(liveAvatarSession))
+        );
 
     } catch (error) {
         liveAvatarStatus.textContent = "Error iniciando LiveAvatar. Mira la consola.";
