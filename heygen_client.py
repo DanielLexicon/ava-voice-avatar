@@ -1,29 +1,58 @@
 import os
+import re
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-HEYGEN_API_KEY = os.getenv("HEYGEN_API_KEY")
-
 BASE_URL = "https://api.heygen.com"
 
-HEADERS = {
-    "X-Api-Key": HEYGEN_API_KEY,
-    "Content-Type": "application/json"
-}
+
+def clean_api_key(value):
+    """
+    Limpia espacios, saltos de línea, tabs, comillas y coma final.
+    """
+    if not value:
+        return ""
+
+    value = value.strip()
+    value = value.strip('"').strip("'")
+    value = value.rstrip(",")
+
+    # Elimina cualquier espacio, salto de línea o tab dentro del valor
+    value = re.sub(r"\s+", "", value)
+
+    return value
+
+
+def get_heygen_api_key():
+    raw_key = os.getenv("HEYGEN_API_KEY", "")
+    api_key = clean_api_key(raw_key)
+
+    if not api_key:
+        raise ValueError("Falta HEYGEN_API_KEY en las variables de entorno")
+
+    return api_key
+
+
+def get_headers():
+    return {
+        "X-Api-Key": get_heygen_api_key(),
+        "Content-Type": "application/json"
+    }
 
 
 def get_streaming_token():
     """
     Pide a HeyGen un token temporal para usar el Streaming Avatar SDK en el frontend.
     """
-    if not HEYGEN_API_KEY:
-        raise ValueError("Falta HEYGEN_API_KEY en el archivo .env")
-
     url = f"{BASE_URL}/v1/streaming.create_token"
 
-    response = requests.post(url, headers=HEADERS, timeout=30)
+    response = requests.post(
+        url,
+        headers=get_headers(),
+        timeout=30
+    )
 
     try:
         data = response.json()
