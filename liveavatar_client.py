@@ -81,16 +81,20 @@ def list_public_avatars():
 
 def create_session_token_full_mode():
     """
-    Primer test para crear un session token de LiveAvatar en FULL mode.
+    Test para crear un session token de LiveAvatar en FULL mode.
 
-    FULL mode deja que LiveAvatar maneje el pipeline de avatar en tiempo real.
-    Si esto funciona, después conectamos el frontend/SDK.
+    FULL mode deja que LiveAvatar maneje el pipeline del avatar.
     """
     url = f"{BASE_URL}/sessions/token"
 
     payload = {
         "mode": "FULL",
         "avatar_id": get_liveavatar_avatar_id(),
+        "avatar_persona": {
+            "name": "Ava",
+            "personality": "Warm, friendly, concise, and helpful AI assistant.",
+            "language": "es"
+        },
         "voice": {
             "voice_id": get_liveavatar_voice_id()
         },
